@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\MarketplaceController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PeopleController;
@@ -57,6 +58,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/people/{user}', [PeopleController::class, 'show'])->name('people.show');
     Route::post('/people/{user}/follow', [ConnectionController::class, 'store'])->name('connections.store');
     Route::delete('/people/{user}/follow', [ConnectionController::class, 'destroy'])->name('connections.destroy');
+
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{user}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{user}', [MessageController::class, 'store'])->name('messages.store');
 
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');

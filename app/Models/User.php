@@ -87,6 +87,17 @@ class User extends Authenticatable
         return $this->following()->where('following_id', $user->id)->exists();
     }
 
+    public function unreadMessagesCount(): int
+    {
+        return Message::query()
+            ->whereHas('conversation', function ($query) {
+                $query->where('user_one_id', $this->id)->orWhere('user_two_id', $this->id);
+            })
+            ->where('sender_id', '!=', $this->id)
+            ->whereNull('read_at')
+            ->count();
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

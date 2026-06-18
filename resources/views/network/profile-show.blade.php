@@ -27,18 +27,23 @@
 
                     @auth
                         @if ($profileUser->id !== Auth::id())
-                            @if ($isFollowing)
-                                <form method="POST" action="{{ route('connections.destroy', $profileUser) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <x-secondary-button>{{ __('Unfollow') }}</x-secondary-button>
-                                </form>
-                            @else
-                                <form method="POST" action="{{ route('connections.store', $profileUser) }}">
-                                    @csrf
-                                    <x-primary-button>{{ __('Follow') }}</x-primary-button>
-                                </form>
-                            @endif
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('messages.show', $profileUser) }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">
+                                    {{ __('Message') }}
+                                </a>
+                                @if ($isFollowing)
+                                    <form method="POST" action="{{ route('connections.destroy', $profileUser) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-secondary-button>{{ __('Unfollow') }}</x-secondary-button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{ route('connections.store', $profileUser) }}">
+                                        @csrf
+                                        <x-primary-button>{{ __('Follow') }}</x-primary-button>
+                                    </form>
+                                @endif
+                            </div>
                         @endif
                     @endauth
                 </div>

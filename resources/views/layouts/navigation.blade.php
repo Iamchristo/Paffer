@@ -18,6 +18,14 @@
                     <x-nav-link :href="route('people.index')" :active="request()->routeIs('people.*')">
                         {{ __('People') }}
                     </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+                            {{ __('Messages') }}
+                            @if (($unreadMessagesCount = Auth::user()->unreadMessagesCount()) > 0)
+                                <span class="ms-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold text-white bg-indigo-600 rounded-full">{{ $unreadMessagesCount }}</span>
+                            @endif
+                        </x-nav-link>
+                    @endauth
                     <x-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                         {{ __('Marketplace') }}
                     </x-nav-link>
@@ -128,6 +136,14 @@
             <x-responsive-nav-link :href="route('people.index')" :active="request()->routeIs('people.*')">
                 {{ __('People') }}
             </x-responsive-nav-link>
+            @auth
+                <x-responsive-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
+                    {{ __('Messages') }}
+                    @if (($unreadMessagesCount = Auth::user()->unreadMessagesCount()) > 0)
+                        <span class="ms-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold text-white bg-indigo-600 rounded-full">{{ $unreadMessagesCount }}</span>
+                    @endif
+                </x-responsive-nav-link>
+            @endauth
             <x-responsive-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                 {{ __('Marketplace') }}
             </x-responsive-nav-link>
