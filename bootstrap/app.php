@@ -12,10 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\RedirectIfNotInstalled::class,
+        ]);
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'seller' => \App\Http\Middleware\EnsureUserIsApprovedSeller::class,
             'tutor' => \App\Http\Middleware\EnsureUserIsApprovedTutor::class,
+            'guest.install' => \App\Http\Middleware\RedirectIfInstalled::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

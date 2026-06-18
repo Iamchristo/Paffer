@@ -26,6 +26,8 @@ use App\Http\Controllers\Tutor\CourseController as TutorCourseController;
 use App\Http\Controllers\Tutor\LessonController as TutorLessonController;
 use Illuminate\Support\Facades\Route;
 
+require __DIR__.'/install.php';
+
 Route::get('/', function () {
     return view('welcome');
 });

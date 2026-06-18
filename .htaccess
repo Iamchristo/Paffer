@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Requests already targeting /public (e.g. compiled Vite assets) are
+    # served as-is.
+    RewriteCond %{REQUEST_URI} ^/public/
+    RewriteRule ^ - [L]
+
+    # Everything else is routed into /public, where Laravel's own
+    # public/.htaccess takes over and dispatches to public/index.php.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

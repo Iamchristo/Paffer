@@ -10,6 +10,10 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
     require $maintenance;
 }
 
+// Make sure .env / APP_KEY exist before the framework boots, so a fresh
+// upload with no .env can still render the installer.
+require __DIR__.'/../bootstrap/ensure-env.php';
+
 // Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
 
