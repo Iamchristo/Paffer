@@ -87,6 +87,16 @@ class User extends Authenticatable
         return $this->following()->where('following_id', $user->id)->exists();
     }
 
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_members')->withTimestamps();
+    }
+
+    public function ownedGroups(): HasMany
+    {
+        return $this->hasMany(Group::class, 'owner_id');
+    }
+
     public function unreadMessagesCount(): int
     {
         return Message::query()

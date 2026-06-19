@@ -26,6 +26,9 @@
                             @endif
                         </x-nav-link>
                     @endauth
+                    <x-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
+                        {{ __('Groups') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                         {{ __('Marketplace') }}
                     </x-nav-link>
@@ -144,6 +147,9 @@
                     @endif
                 </x-responsive-nav-link>
             @endauth
+            <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
+                {{ __('Groups') }}
+            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                 {{ __('Marketplace') }}
             </x-responsive-nav-link>

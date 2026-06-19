@@ -6,6 +6,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupMemberController;
+use App\Http\Controllers\GroupPostCommentController;
+use App\Http\Controllers\GroupPostController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\MessageController;
@@ -46,6 +50,12 @@ Route::get('/marketplace/products/{product:slug}', [ProductController::class, 's
 Route::get('/learn', [CourseController::class, 'index'])->name('learn.index');
 Route::get('/learn/{course:slug}', [CourseController::class, 'show'])->name('learn.show-catalog');
 
+// Public groups / forums (browsing/index/show); creation requires auth.
+Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+Route::get('/groups/create', [GroupController::class, 'create'])->middleware('auth')->name('groups.create');
+Route::post('/groups', [GroupController::class, 'store'])->middleware('auth')->name('groups.store');
+Route::get('/groups/{group:slug}', [GroupController::class, 'show'])->name('groups.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -62,6 +72,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{user}', [MessageController::class, 'show'])->name('messages.show');
     Route::post('/messages/{user}', [MessageController::class, 'store'])->name('messages.store');
+
+    Route::post('/groups/{group:slug}/join', [GroupMemberController::class, 'store'])->name('groups.join');
+    Route::delete('/groups/{group:slug}/leave', [GroupMemberController::class, 'destroy'])->name('groups.leave');
+    Route::post('/groups/{group:slug}/posts', [GroupPostController::class, 'store'])->name('group-posts.store');
+    Route::post('/group-posts/{groupPost}/comments', [GroupPostCommentController::class, 'store'])->name('group-posts.comments.store');
 
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
