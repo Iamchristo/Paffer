@@ -10,18 +10,21 @@ PAFFAR is a hybrid social-professional network for entrepreneurs, combining Link
 - **Course hosting** — tutor application/approval workflow, course CRUD with lessons, course submission/admin approval, public catalog, enrollment, and a lesson player.
 - **Admin** — dashboard with platform stats and a verification queue for pending sellers, tutors, and courses.
 
+## Later phases (also in this build)
+
+- **Direct messaging** — 1-on-1 conversations between members, with unread tracking.
+- **Groups / forums** — topic-based groups with membership and discussion threads.
+- **Events** — organizer-created events with RSVP and capacity limits.
+- **Ride booking** — members can offer rides (optionally tied to an event) and book seats.
+
 ## Future phases (not in this build)
 
-These were scoped out of the Phase 1 MVP and are not implemented:
+These were scoped out and are not implemented:
 
-- Ride booking
 - Supply chain / logistics
 - Advertising platform
 - PAFFAR wallet / payments
 - Project workspaces
-- Direct messaging
-- Groups / forums
-- Events
 - Mobile app
 - AI-driven recommendations
 

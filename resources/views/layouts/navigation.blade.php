@@ -29,6 +29,12 @@
                     <x-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
                         {{ __('Groups') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.*')">
+                        {{ __('Events') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('rides.index')" :active="request()->routeIs('rides.*')">
+                        {{ __('Rides') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                         {{ __('Marketplace') }}
                     </x-nav-link>
@@ -149,6 +155,12 @@
             @endauth
             <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
                 {{ __('Groups') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('events.index')" :active="request()->routeIs('events.*')">
+                {{ __('Events') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('rides.index')" :active="request()->routeIs('rides.*')">
+                {{ __('Rides') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
                 {{ __('Marketplace') }}

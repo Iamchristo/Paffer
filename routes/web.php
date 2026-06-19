@@ -6,6 +6,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\EventAttendanceController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMemberController;
 use App\Http\Controllers\GroupPostCommentController;
@@ -22,6 +24,8 @@ use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\RideBookingController;
+use App\Http\Controllers\RideController;
 use App\Http\Controllers\Seller\ApplicationController as SellerApplicationController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
@@ -56,6 +60,18 @@ Route::get('/groups/create', [GroupController::class, 'create'])->middleware('au
 Route::post('/groups', [GroupController::class, 'store'])->middleware('auth')->name('groups.store');
 Route::get('/groups/{group:slug}', [GroupController::class, 'show'])->name('groups.show');
 
+// Public events; creation requires auth.
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/create', [EventController::class, 'create'])->middleware('auth')->name('events.create');
+Route::post('/events', [EventController::class, 'store'])->middleware('auth')->name('events.store');
+Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
+
+// Public ride board; creation requires auth.
+Route::get('/rides', [RideController::class, 'index'])->name('rides.index');
+Route::get('/rides/create', [RideController::class, 'create'])->middleware('auth')->name('rides.create');
+Route::post('/rides', [RideController::class, 'store'])->middleware('auth')->name('rides.store');
+Route::get('/rides/{ride}', [RideController::class, 'show'])->name('rides.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -77,6 +93,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/groups/{group:slug}/leave', [GroupMemberController::class, 'destroy'])->name('groups.leave');
     Route::post('/groups/{group:slug}/posts', [GroupPostController::class, 'store'])->name('group-posts.store');
     Route::post('/group-posts/{groupPost}/comments', [GroupPostCommentController::class, 'store'])->name('group-posts.comments.store');
+
+    Route::post('/events/{event:slug}/rsvp', [EventAttendanceController::class, 'store'])->name('events.rsvp.store');
+    Route::delete('/events/{event:slug}/rsvp', [EventAttendanceController::class, 'destroy'])->name('events.rsvp.destroy');
+
+    Route::post('/rides/{ride}/bookings', [RideBookingController::class, 'store'])->name('rides.bookings.store');
+    Route::delete('/rides/{ride}/bookings', [RideBookingController::class, 'destroy'])->name('rides.bookings.destroy');
 
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');

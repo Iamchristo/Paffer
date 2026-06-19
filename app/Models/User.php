@@ -97,6 +97,26 @@ class User extends Authenticatable
         return $this->hasMany(Group::class, 'owner_id');
     }
 
+    public function eventsAttending(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'event_attendees')->withTimestamps();
+    }
+
+    public function organizedEvents(): HasMany
+    {
+        return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function ridesOffered(): HasMany
+    {
+        return $this->hasMany(Ride::class, 'driver_id');
+    }
+
+    public function rideBookings(): HasMany
+    {
+        return $this->hasMany(RideBooking::class, 'passenger_id');
+    }
+
     public function unreadMessagesCount(): int
     {
         return Message::query()
