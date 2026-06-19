@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'is_seller', 'seller_status', 'is_tutor', 'tutor_status'])]
+#[Fillable(['name', 'email', 'password', 'role', 'is_seller', 'seller_status', 'is_tutor', 'tutor_status', 'is_suspended'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -32,6 +32,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_seller' => 'boolean',
             'is_tutor' => 'boolean',
+            'is_suspended' => 'boolean',
         ];
     }
 

@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ModerationController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConnectionController;
@@ -172,6 +176,31 @@ Route::middleware('auth')->group(function () {
         Route::post('/verification/courses/{course}/reject', [VerificationController::class, 'rejectCourse'])->name('verification.courses.reject');
         Route::post('/verification/ads/{ad}/approve', [VerificationController::class, 'approveAd'])->name('verification.ads.approve');
         Route::post('/verification/ads/{ad}/reject', [VerificationController::class, 'rejectAd'])->name('verification.ads.reject');
+
+        Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
+
+        Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
+        Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');
+
+        Route::get('/moderation', [ModerationController::class, 'index'])->name('moderation.index');
+        Route::delete('/moderation/posts/{post}', [ModerationController::class, 'destroyPost'])->name('moderation.posts.destroy');
+        Route::delete('/moderation/groups/{group}', [ModerationController::class, 'destroyGroup'])->name('moderation.groups.destroy');
+        Route::delete('/moderation/events/{event}', [ModerationController::class, 'destroyEvent'])->name('moderation.events.destroy');
+        Route::delete('/moderation/rides/{ride}', [ModerationController::class, 'destroyRide'])->name('moderation.rides.destroy');
+        Route::post('/moderation/stores/{store}/suspend', [ModerationController::class, 'suspendStore'])->name('moderation.stores.suspend');
+        Route::post('/moderation/stores/{store}/unsuspend', [ModerationController::class, 'unsuspendStore'])->name('moderation.stores.unsuspend');
+        Route::post('/moderation/products/{product}/toggle', [ModerationController::class, 'toggleProduct'])->name('moderation.products.toggle');
+        Route::post('/moderation/courses/{course}/suspend', [ModerationController::class, 'suspendCourse'])->name('moderation.courses.suspend');
+        Route::post('/moderation/courses/{course}/unsuspend', [ModerationController::class, 'unsuspendCourse'])->name('moderation.courses.unsuspend');
+
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::post('/users/{user}/toggle-admin', [AdminUserController::class, 'toggleAdmin'])->name('users.toggle-admin');
+        Route::post('/users/{user}/suspend', [AdminUserController::class, 'suspend'])->name('users.suspend');
+        Route::post('/users/{user}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('users.unsuspend');
+        Route::post('/users/{user}/seller-status', [AdminUserController::class, 'updateSellerStatus'])->name('users.seller-status');
+        Route::post('/users/{user}/tutor-status', [AdminUserController::class, 'updateTutorStatus'])->name('users.tutor-status');
     });
 });
 

@@ -8,7 +8,7 @@ PAFFAR is a hybrid social-professional network for entrepreneurs, combining Link
 - **Networking/feed** — posts, likes, comments, following, a people directory, and public profile pages.
 - **Marketplace** — seller application/approval workflow, store management, product CRUD, browsing, session-based cart, checkout, order history (buyer and seller sides), reviews.
 - **Course hosting** — tutor application/approval workflow, course CRUD with lessons, course submission/admin approval, public catalog, enrollment, and a lesson player.
-- **Admin** — dashboard with platform stats and a verification queue for pending sellers, tutors, and courses.
+- **Admin** — dashboard with platform stats, a verification queue for pending sellers/tutors/courses/ads, SMTP/email settings, a broadcast announcement tool, a unified moderation panel (posts, groups, events, rides, stores, products, courses), and user management (search, promote/demote, suspend, manual seller/tutor overrides).
 
 ## Later phases (also in this build)
 
