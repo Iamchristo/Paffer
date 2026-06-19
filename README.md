@@ -19,14 +19,14 @@ PAFFAR is a hybrid social-professional network for entrepreneurs, combining Link
 - **Supply chain / logistics** — per-order shipment tracking (carrier, tracking number, status, ship/delivery dates) managed by sellers, visible to buyers.
 - **Advertising platform** — members submit ads for admin review; approved ads appear as "Sponsored" placements on the feed and marketplace.
 
-## Future phases (not in this build)
+## Phase 2 (also in this build)
 
-These were scoped out and are not implemented:
+- **PAFFAR wallet** — an internal balance/ledger per member: top-up requests reviewed and approved by an admin, "pay with wallet" at marketplace checkout, full transaction history, and an admin wallet management page (pending top-ups, search, manual balance adjustments). No external payment gateway or real money movement.
+- **Project workspaces** — Trello-style shared workspaces with members/roles and a 3-column (To Do / In Progress / Done) task board; an admin workspaces management page lists every workspace and can archive or delete one.
+- **Mobile app** — PAFFAR ships as an installable Progressive Web App (manifest, service worker, offline fallback page, home-screen icons) rather than a separate native codebase; an admin "Mobile App" page controls the install prompt, app short name, and theme color.
+- **AI-driven recommendations** — a heuristic, content-based + collaborative recommendation engine (industry match, purchase/enrollment history, activity of people you follow) surfaces "Recommended for you" on the feed, marketplace, and learn catalog. No external AI/LLM API calls. An admin "Recommendations" page toggles each surface and shows basic signal stats.
 
-- PAFFAR wallet / payments
-- Project workspaces
-- Mobile app
-- AI-driven recommendations
+These were originally scoped as future phases but are included in this build.
 
 ## Local development
 

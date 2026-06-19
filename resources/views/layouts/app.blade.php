@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-pwa-enabled="{{ \App\Models\Setting::getBool('pwa_enabled', true) ? '1' : '0' }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+
+        @if (\App\Models\Setting::getBool('pwa_enabled', true))
+            <link rel="manifest" href="{{ route('pwa.manifest') }}">
+            <meta name="theme-color" content="{{ \App\Models\Setting::get('pwa_theme_color', '#4f46e5') }}">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-mobile-web-app-title" content="{{ \App\Models\Setting::get('pwa_short_name', config('app.name')) }}">
+            <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
+        @endif
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

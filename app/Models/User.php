@@ -40,12 +40,28 @@ class User extends Authenticatable
     {
         static::created(function (User $user) {
             $user->profile()->create([]);
+            $user->wallet()->create(['balance_cents' => 0]);
         });
     }
 
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function ownedWorkspaces(): HasMany
+    {
+        return $this->hasMany(Workspace::class, 'owner_id');
+    }
+
+    public function workspaces(): BelongsToMany
+    {
+        return $this->belongsToMany(Workspace::class, 'workspace_members')->withPivot('role')->withTimestamps();
     }
 
     public function posts(): HasMany

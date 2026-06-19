@@ -37,9 +37,18 @@ class OrderController extends Controller
 
         abort_if(empty($cart), 400, 'Your cart is empty.');
 
+        $payWithWallet = $request->boolean('pay_with_wallet');
         $products = Product::with('store')->whereIn('id', array_keys($cart))->get()->keyBy('id');
 
-        DB::transaction(function () use ($cart, $products, $request) {
+        if ($payWithWallet) {
+            $estimatedTotal = $products->sum(fn ($product) => min($product->stock, $cart[$product->id]) * $product->price_cents);
+
+            if ($request->user()->wallet->balance_cents < $estimatedTotal) {
+                return back()->with('error', 'wallet-insufficient-funds');
+            }
+        }
+
+        DB::transaction(function () use ($cart, $products, $request, $payWithWallet) {
             foreach ($products->groupBy('store_id') as $storeId => $storeProducts) {
                 $totalCents = 0;
 
@@ -68,6 +77,19 @@ class OrderController extends Controller
                 }
 
                 $order->update(['total_cents' => $totalCents]);
+
+                if ($payWithWallet && $totalCents > 0) {
+                    $wallet = $request->user()->wallet;
+                    $wallet->debit($totalCents);
+                    $wallet->transactions()->create([
+                        'order_id' => $order->id,
+                        'type' => 'payment',
+                        'amount_cents' => -$totalCents,
+                        'status' => 'completed',
+                        'description' => "Payment for order #{$order->id}",
+                    ]);
+                    $order->update(['status' => 'processing']);
+                }
             }
         });
 

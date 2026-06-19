@@ -10,6 +10,20 @@
                 <x-primary-button>{{ __('Search') }}</x-primary-button>
             </form>
 
+            @if (($recommendedProducts ?? collect())->isNotEmpty())
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h3 class="font-semibold text-gray-900 mb-3">{{ __('Recommended for you') }}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach ($recommendedProducts as $product)
+                            <a href="{{ route('marketplace.product', $product) }}" class="border border-gray-100 rounded-lg p-4 hover:shadow-md transition">
+                                <h4 class="font-medium text-gray-900">{{ $product->name }}</h4>
+                                <p class="text-sm text-gray-500 mt-1">${{ number_format($product->price_cents / 100, 2) }}</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             @if ($ads->isNotEmpty())
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     @foreach ($ads as $ad)

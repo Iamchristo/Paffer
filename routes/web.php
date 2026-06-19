@@ -3,10 +3,14 @@
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\MobileController as AdminMobileController;
 use App\Http\Controllers\Admin\ModerationController;
+use App\Http\Controllers\Admin\RecommendationController as AdminRecommendationController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VerificationController;
+use App\Http\Controllers\Admin\WalletController as AdminWalletController;
+use App\Http\Controllers\Admin\WorkspaceController as AdminWorkspaceController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\CourseController;
@@ -28,6 +32,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostLikeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PwaManifestController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RideBookingController;
 use App\Http\Controllers\RideController;
@@ -39,6 +44,10 @@ use App\Http\Controllers\Seller\StoreController as SellerStoreController;
 use App\Http\Controllers\Tutor\ApplicationController as TutorApplicationController;
 use App\Http\Controllers\Tutor\CourseController as TutorCourseController;
 use App\Http\Controllers\Tutor\LessonController as TutorLessonController;
+use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\WorkspaceMemberController;
+use App\Http\Controllers\WorkspaceTaskController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/install.php';
@@ -46,6 +55,8 @@ require __DIR__.'/install.php';
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/manifest.webmanifest', PwaManifestController::class)->name('pwa.manifest');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -120,6 +131,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+
+    // Wallet
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
+    Route::post('/wallet/topup', [WalletController::class, 'storeTopup'])->name('wallet.topup');
+
+    // Project workspaces
+    Route::get('/workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');
+    Route::get('/workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create');
+    Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store');
+    Route::get('/workspaces/{workspace:slug}', [WorkspaceController::class, 'show'])->name('workspaces.show');
+    Route::delete('/workspaces/{workspace:slug}', [WorkspaceController::class, 'destroy'])->name('workspaces.destroy');
+    Route::post('/workspaces/{workspace:slug}/members', [WorkspaceMemberController::class, 'store'])->name('workspace-members.store');
+    Route::delete('/workspaces/{workspace:slug}/members/{user}', [WorkspaceMemberController::class, 'destroy'])->name('workspace-members.destroy');
+    Route::post('/workspaces/{workspace:slug}/tasks', [WorkspaceTaskController::class, 'store'])->name('workspace-tasks.store');
+    Route::patch('/workspaces/{workspace:slug}/tasks/{task}', [WorkspaceTaskController::class, 'update'])->name('workspace-tasks.update');
+    Route::delete('/workspaces/{workspace:slug}/tasks/{task}', [WorkspaceTaskController::class, 'destroy'])->name('workspace-tasks.destroy');
 
     Route::post('/marketplace/stores/{store:slug}/reviews', [ReviewController::class, 'storeForStore'])->name('reviews.store-store');
     Route::post('/learn/{course:slug}/reviews', [ReviewController::class, 'storeForCourse'])->name('reviews.store-course');
@@ -201,6 +228,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('users.unsuspend');
         Route::post('/users/{user}/seller-status', [AdminUserController::class, 'updateSellerStatus'])->name('users.seller-status');
         Route::post('/users/{user}/tutor-status', [AdminUserController::class, 'updateTutorStatus'])->name('users.tutor-status');
+
+        Route::get('/wallets', [AdminWalletController::class, 'index'])->name('wallets.index');
+        Route::post('/wallets/topups/{transaction}/approve', [AdminWalletController::class, 'approveTopup'])->name('wallets.topups.approve');
+        Route::post('/wallets/topups/{transaction}/reject', [AdminWalletController::class, 'rejectTopup'])->name('wallets.topups.reject');
+        Route::post('/wallets/{user}/adjust', [AdminWalletController::class, 'adjust'])->name('wallets.adjust');
+
+        Route::get('/workspaces', [AdminWorkspaceController::class, 'index'])->name('workspaces.index');
+        Route::get('/workspaces/{workspace}', [AdminWorkspaceController::class, 'show'])->name('workspaces.show');
+        Route::post('/workspaces/{workspace}/archive', [AdminWorkspaceController::class, 'archive'])->name('workspaces.archive');
+        Route::post('/workspaces/{workspace}/unarchive', [AdminWorkspaceController::class, 'unarchive'])->name('workspaces.unarchive');
+        Route::delete('/workspaces/{workspace}', [AdminWorkspaceController::class, 'destroy'])->name('workspaces.destroy');
+
+        Route::get('/mobile', [AdminMobileController::class, 'edit'])->name('mobile.edit');
+        Route::put('/mobile', [AdminMobileController::class, 'update'])->name('mobile.update');
+
+        Route::get('/recommendations', [AdminRecommendationController::class, 'edit'])->name('recommendations.edit');
+        Route::put('/recommendations', [AdminRecommendationController::class, 'update'])->name('recommendations.update');
     });
 });
 

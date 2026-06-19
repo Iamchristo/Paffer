@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Setting;
+use App\Services\RecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, RecommendationService $recommendations): View
     {
         $search = $request->string('q')->toString();
 
@@ -21,9 +23,14 @@ class CourseController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $recommendedCourses = $request->user() && Setting::getBool('recommend_on_learn', true)
+            ? $recommendations->courses($request->user())
+            : collect();
+
         return view('learn.catalog', [
             'courses' => $courses,
             'search' => $search,
+            'recommendedCourses' => $recommendedCourses,
         ]);
     }
 

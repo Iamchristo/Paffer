@@ -9,6 +9,10 @@
                 <div class="bg-green-50 text-green-700 text-sm rounded-md p-3">{{ session('status') }}</div>
             @endif
 
+            @if (session('error') === 'wallet-insufficient-funds')
+                <div class="bg-red-50 text-red-700 text-sm rounded-md p-3">{{ __('Your wallet balance is too low to cover this order.') }}</div>
+            @endif
+
             @forelse ($items as $item)
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 flex items-center justify-between">
                     <div>
@@ -34,9 +38,16 @@
 
             @if ($items->isNotEmpty())
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 flex items-center justify-between">
-                    <p class="text-lg font-semibold text-gray-900">{{ __('Total') }}: ${{ number_format($totalCents / 100, 2) }}</p>
-                    <form method="POST" action="{{ route('checkout.store') }}">
+                    <div>
+                        <p class="text-lg font-semibold text-gray-900">{{ __('Total') }}: ${{ number_format($totalCents / 100, 2) }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ __('Wallet balance') }}: ${{ number_format((Auth::user()->wallet->balance_cents ?? 0) / 100, 2) }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('checkout.store') }}" class="flex items-center gap-3">
                         @csrf
+                        <label class="flex items-center gap-2 text-sm text-gray-600">
+                            <input type="checkbox" name="pay_with_wallet" value="1" class="rounded border-gray-300">
+                            {{ __('Pay with wallet') }}
+                        </label>
                         <x-primary-button>{{ __('Checkout') }}</x-primary-button>
                     </form>
                 </div>

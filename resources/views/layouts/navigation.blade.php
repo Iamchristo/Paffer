@@ -42,6 +42,11 @@
                         {{ __('Learn') }}
                     </x-nav-link>
                     @auth
+                        <x-nav-link :href="route('workspaces.index')" :active="request()->routeIs('workspaces.*')">
+                            {{ __('Workspaces') }}
+                        </x-nav-link>
+                    @endauth
+                    @auth
                         @if (Auth::user()->isApprovedSeller())
                             <x-nav-link :href="route('seller.dashboard')" :active="request()->routeIs('seller.*')">
                                 {{ __('My Store') }}
@@ -64,6 +69,9 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-2">
                 @auth
+                    <a href="{{ route('wallet.index') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+                        {{ __('Wallet') }}: ${{ number_format((Auth::user()->wallet->balance_cents ?? 0) / 100, 2) }}
+                    </a>
                     <a href="{{ route('cart.index') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
                         {{ __('Cart') }}
                     </a>
@@ -172,6 +180,12 @@
                 {{ __('Learn') }}
             </x-responsive-nav-link>
             @auth
+                <x-responsive-nav-link :href="route('workspaces.index')" :active="request()->routeIs('workspaces.*')">
+                    {{ __('Workspaces') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('wallet.index')" :active="request()->routeIs('wallet.*')">
+                    {{ __('Wallet') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                     {{ __('Cart') }}
                 </x-responsive-nav-link>

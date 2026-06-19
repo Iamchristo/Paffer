@@ -9,6 +9,20 @@
                 <input type="text" name="q" value="{{ $search }}" placeholder="{{ __('Search courses...') }}" class="w-full rounded-md border-gray-300">
             </form>
 
+            @if (($recommendedCourses ?? collect())->isNotEmpty())
+                <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <h3 class="font-semibold text-gray-900 mb-3">{{ __('Recommended for you') }}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach ($recommendedCourses as $course)
+                            <a href="{{ route('learn.show-catalog', $course) }}" class="border border-gray-100 rounded-lg p-4 hover:shadow-md transition">
+                                <h4 class="font-medium text-gray-900">{{ $course->title }}</h4>
+                                <p class="text-xs text-gray-500 mt-1">{{ __('By') }} {{ $course->tutor->name }}</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse ($courses as $course)
                     <a href="{{ route('learn.show-catalog', $course) }}" class="bg-white shadow-sm sm:rounded-lg p-6 hover:shadow-md transition">
