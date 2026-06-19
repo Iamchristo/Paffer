@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-#[Fillable(['name', 'slug', 'description', 'logo_path', 'banner_path'])]
+#[Fillable(['name', 'slug', 'description', 'logo_path', 'banner_path', 'status'])]
 class Store extends Model
 {
     public function user(): BelongsTo
