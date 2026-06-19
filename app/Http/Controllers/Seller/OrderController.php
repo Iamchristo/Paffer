@@ -12,7 +12,7 @@ class OrderController extends Controller
 {
     public function index(Request $request): View
     {
-        $orders = $request->user()->store->orders()->with(['items.product', 'buyer'])->latest()->paginate(15);
+        $orders = $request->user()->store->orders()->with(['items.product', 'buyer', 'shipment'])->latest()->paginate(15);
 
         return view('seller.orders.index', [
             'orders' => $orders,

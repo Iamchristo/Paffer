@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ad;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,9 +26,12 @@ class NetworkController extends Controller
             ->limit(5)
             ->get();
 
+        $ads = Ad::where('status', 'approved')->inRandomOrder()->limit(3)->get();
+
         return view('network.feed', [
             'posts' => $posts,
             'suggestions' => $suggestions,
+            'ads' => $ads,
         ]);
     }
 }

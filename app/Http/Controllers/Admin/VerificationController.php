@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,7 @@ class VerificationController extends Controller
             'pendingSellers' => User::where('seller_status', 'pending')->with('store')->get(),
             'pendingTutors' => User::where('tutor_status', 'pending')->get(),
             'pendingCourses' => Course::where('status', 'pending')->with('tutor')->get(),
+            'pendingAds' => Ad::where('status', 'pending')->with('advertiser')->get(),
         ]);
     }
 
@@ -61,5 +63,19 @@ class VerificationController extends Controller
         $course->update(['status' => 'rejected']);
 
         return back()->with('status', 'course-rejected');
+    }
+
+    public function approveAd(Ad $ad): RedirectResponse
+    {
+        $ad->update(['status' => 'approved']);
+
+        return back()->with('status', 'ad-approved');
+    }
+
+    public function rejectAd(Ad $ad): RedirectResponse
+    {
+        $ad->update(['status' => 'rejected']);
+
+        return back()->with('status', 'ad-rejected');
     }
 }

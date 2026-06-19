@@ -117,6 +117,11 @@ class User extends Authenticatable
         return $this->hasMany(RideBooking::class, 'passenger_id');
     }
 
+    public function ads(): HasMany
+    {
+        return $this->hasMany(Ad::class, 'advertiser_id');
+    }
+
     public function unreadMessagesCount(): int
     {
         return Message::query()

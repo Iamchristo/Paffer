@@ -16,13 +16,13 @@ PAFFAR is a hybrid social-professional network for entrepreneurs, combining Link
 - **Groups / forums** — topic-based groups with membership and discussion threads.
 - **Events** — organizer-created events with RSVP and capacity limits.
 - **Ride booking** — members can offer rides (optionally tied to an event) and book seats.
+- **Supply chain / logistics** — per-order shipment tracking (carrier, tracking number, status, ship/delivery dates) managed by sellers, visible to buyers.
+- **Advertising platform** — members submit ads for admin review; approved ads appear as "Sponsored" placements on the feed and marketplace.
 
 ## Future phases (not in this build)
 
 These were scoped out and are not implemented:
 
-- Supply chain / logistics
-- Advertising platform
 - PAFFAR wallet / payments
 - Project workspaces
 - Mobile app

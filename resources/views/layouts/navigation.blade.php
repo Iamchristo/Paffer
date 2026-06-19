@@ -91,6 +91,9 @@
                             <x-dropdown-link :href="route('enrollments.index')">
                                 {{ __('My Enrollments') }}
                             </x-dropdown-link>
+                            <x-dropdown-link :href="route('ads.index')">
+                                {{ __('My Ads') }}
+                            </x-dropdown-link>
                             @unless (Auth::user()->is_seller)
                                 <x-dropdown-link :href="route('seller.apply')">
                                     {{ __('Become a Seller') }}
@@ -186,6 +189,9 @@
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.edit')">
                         {{ __('Profile') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('ads.index')">
+                        {{ __('My Ads') }}
                     </x-responsive-nav-link>
 
                     <!-- Authentication -->

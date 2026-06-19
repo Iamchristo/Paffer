@@ -77,6 +77,30 @@
                     <p class="text-gray-600 text-sm">{{ __('No pending courses.') }}</p>
                 @endforelse
             </div>
+
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <h3 class="font-semibold text-gray-900 mb-3">{{ __('Pending Ads') }}</h3>
+                @forelse ($pendingAds as $ad)
+                    <div class="border-b border-gray-100 py-3 flex items-center justify-between text-sm">
+                        <div>
+                            <p class="font-medium text-gray-900">{{ $ad->title }}</p>
+                            <p class="text-gray-500">{{ __('By') }} {{ $ad->advertiser->name }}</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <form method="POST" action="{{ route('admin.verification.ads.approve', $ad) }}">
+                                @csrf
+                                <button type="submit" class="text-green-600">{{ __('Approve') }}</button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.verification.ads.reject', $ad) }}">
+                                @csrf
+                                <button type="submit" class="text-red-500">{{ __('Reject') }}</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-gray-600 text-sm">{{ __('No pending ads.') }}</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </x-app-layout>

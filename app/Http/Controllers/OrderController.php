@@ -24,7 +24,7 @@ class OrderController extends Controller
     {
         abort_unless($order->buyer_id === $request->user()->id, 403);
 
-        $order->load(['items.product', 'store']);
+        $order->load(['items.product', 'store', 'shipment']);
 
         return view('marketplace.order-show', [
             'order' => $order,

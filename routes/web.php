@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\CartController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\RideController;
 use App\Http\Controllers\Seller\ApplicationController as SellerApplicationController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Seller\ShipmentController as SellerShipmentController;
 use App\Http\Controllers\Seller\StoreController as SellerStoreController;
 use App\Http\Controllers\Tutor\ApplicationController as TutorApplicationController;
 use App\Http\Controllers\Tutor\CourseController as TutorCourseController;
@@ -123,6 +125,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/learn/{course:slug}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');
     Route::get('/learn/{course:slug}/play/{lesson?}', [LearnController::class, 'show'])->name('learn.show');
 
+    // Advertising
+    Route::get('/ads', [AdController::class, 'index'])->name('ads.index');
+    Route::get('/ads/create', [AdController::class, 'create'])->name('ads.create');
+    Route::post('/ads', [AdController::class, 'store'])->name('ads.store');
+    Route::delete('/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+
     // Become a seller / tutor
     Route::get('/seller/apply', [SellerApplicationController::class, 'create'])->name('seller.apply');
     Route::post('/seller/apply', [SellerApplicationController::class, 'store'])->name('seller.apply.store');
@@ -139,6 +147,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('products', SellerProductController::class)->except(['show']);
             Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
             Route::patch('/orders/{order}', [SellerOrderController::class, 'update'])->name('orders.update');
+            Route::put('/orders/{order}/shipment', [SellerShipmentController::class, 'update'])->name('orders.shipment.update');
         });
     });
 
@@ -161,6 +170,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/verification/tutors/{user}/reject', [VerificationController::class, 'rejectTutor'])->name('verification.tutors.reject');
         Route::post('/verification/courses/{course}/approve', [VerificationController::class, 'approveCourse'])->name('verification.courses.approve');
         Route::post('/verification/courses/{course}/reject', [VerificationController::class, 'rejectCourse'])->name('verification.courses.reject');
+        Route::post('/verification/ads/{ad}/approve', [VerificationController::class, 'approveAd'])->name('verification.ads.approve');
+        Route::post('/verification/ads/{ad}/reject', [VerificationController::class, 'rejectAd'])->name('verification.ads.reject');
     });
 });
 

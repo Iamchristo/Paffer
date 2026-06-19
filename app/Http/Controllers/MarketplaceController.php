@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ad;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,9 +21,12 @@ class MarketplaceController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $ads = Ad::where('status', 'approved')->inRandomOrder()->limit(3)->get();
+
         return view('marketplace.index', [
             'stores' => $stores,
             'search' => $search,
+            'ads' => $ads,
         ]);
     }
 

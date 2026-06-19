@@ -10,6 +10,20 @@
                 <x-primary-button>{{ __('Search') }}</x-primary-button>
             </form>
 
+            @if ($ads->isNotEmpty())
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    @foreach ($ads as $ad)
+                        <a href="{{ $ad->target_url ?? '#' }}" class="bg-white shadow-sm sm:rounded-lg p-4 hover:shadow-md transition">
+                            <p class="text-xs text-gray-400 uppercase mb-1">{{ __('Sponsored') }}</p>
+                            <p class="font-semibold text-gray-900">{{ $ad->title }}</p>
+                            @if ($ad->body)
+                                <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ $ad->body }}</p>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse ($stores as $store)
                     <a href="{{ route('marketplace.store', $store) }}" class="bg-white shadow-sm sm:rounded-lg p-6 hover:shadow-md transition">

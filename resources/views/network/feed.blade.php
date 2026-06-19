@@ -87,6 +87,19 @@
                         @endforeach
                     </div>
                 </div>
+
+                @foreach ($ads as $ad)
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <p class="text-xs text-gray-400 uppercase mb-2">{{ __('Sponsored') }}</p>
+                        @if ($ad->image_path)
+                            <img src="{{ Storage::url($ad->image_path) }}" class="rounded-lg mb-3 max-h-40 w-full object-cover" alt="">
+                        @endif
+                        <a href="{{ $ad->target_url ?? '#' }}" class="font-semibold text-gray-900">{{ $ad->title }}</a>
+                        @if ($ad->body)
+                            <p class="text-sm text-gray-600 mt-1">{{ $ad->body }}</p>
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

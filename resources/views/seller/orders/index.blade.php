@@ -38,6 +38,28 @@
                         </select>
                         <button type="submit" class="text-sm text-indigo-600">{{ __('Update') }}</button>
                     </form>
+
+                    <form method="POST" action="{{ route('seller.orders.shipment.update', $order) }}" class="mt-3 pt-3 border-t border-gray-100 flex items-end gap-2 flex-wrap">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <x-input-label :value="__('Carrier')" />
+                            <input type="text" name="carrier" value="{{ $order->shipment->carrier ?? '' }}" class="mt-1 block w-32 rounded-md border-gray-300 text-sm">
+                        </div>
+                        <div>
+                            <x-input-label :value="__('Tracking #')" />
+                            <input type="text" name="tracking_number" value="{{ $order->shipment->tracking_number ?? '' }}" class="mt-1 block w-40 rounded-md border-gray-300 text-sm">
+                        </div>
+                        <div>
+                            <x-input-label :value="__('Shipment status')" />
+                            <select name="status" class="mt-1 rounded-md border-gray-300 text-sm">
+                                @foreach (['pending', 'preparing', 'shipped', 'in_transit', 'delivered'] as $status)
+                                    <option value="{{ $status }}" @selected(($order->shipment->status ?? 'pending') === $status)>{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="text-sm text-indigo-600">{{ __('Save Shipment') }}</button>
+                    </form>
                 </div>
             @empty
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 text-gray-600">{{ __('No orders yet.') }}</div>
