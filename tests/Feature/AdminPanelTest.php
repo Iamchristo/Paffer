@@ -55,6 +55,38 @@ class AdminPanelTest extends TestCase
         $this->actingAs($user)->get(route('admin.settings.edit'))->assertForbidden();
     }
 
+    public function test_admin_can_select_a_built_in_site_theme(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->put(route('admin.settings.theme.update'), [
+            'site_theme' => 'paffar',
+        ])->assertRedirect();
+
+        $this->assertSame('paffar', \App\Models\Setting::get('site_theme'));
+    }
+
+    public function test_admin_custom_theme_css_is_sanitized_against_style_tag_breakout(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->put(route('admin.settings.theme.update'), [
+            'site_theme' => 'custom',
+            'theme_custom_css' => 'body { color: red; } </style><script>alert(1)</script>',
+        ])->assertRedirect();
+
+        $this->assertStringNotContainsString('</style>', \App\Models\Setting::get('theme_custom_css'));
+    }
+
+    public function test_non_admin_cannot_update_site_theme(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->put(route('admin.settings.theme.update'), [
+            'site_theme' => 'paffar',
+        ])->assertForbidden();
+    }
+
     public function test_admin_can_send_an_announcement_to_all_users(): void
     {
         Mail::fake();

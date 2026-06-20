@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Support\WritesEnvFile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,6 +25,10 @@ class SettingsController extends Controller
                 'encryption' => env('MAIL_ENCRYPTION', ''),
                 'from_address' => env('MAIL_FROM_ADDRESS', ''),
                 'from_name' => env('MAIL_FROM_NAME', ''),
+            ],
+            'theme' => [
+                'site_theme' => Setting::get('site_theme', 'default'),
+                'theme_custom_css' => Setting::get('theme_custom_css', ''),
             ],
         ]);
     }
@@ -60,5 +65,25 @@ class SettingsController extends Controller
         Artisan::call('config:clear');
 
         return back()->with('status', 'settings-updated');
+    }
+
+    public function updateTheme(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'site_theme' => ['required', 'in:default,paffar,custom'],
+            'theme_custom_css' => ['nullable', 'string', 'max:20000'],
+            'theme_css_file' => ['nullable', 'file', 'mimes:css,txt', 'max:200'],
+        ]);
+
+        $css = $data['theme_custom_css'] ?? '';
+
+        if ($request->hasFile('theme_css_file')) {
+            $css = file_get_contents($request->file('theme_css_file')->getRealPath());
+        }
+
+        Setting::set('site_theme', $data['site_theme']);
+        Setting::set('theme_custom_css', str_ireplace('</style', '&lt;/style', $css ?? ''));
+
+        return back()->with('status', 'theme-updated');
     }
 }

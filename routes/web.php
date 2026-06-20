@@ -208,6 +208,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
+        Route::put('/settings/theme', [AdminSettingsController::class, 'updateTheme'])->name('settings.theme.update');
 
         Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
         Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');

@@ -7,6 +7,47 @@
         <div class="bg-green-50 text-green-700 text-sm rounded-md p-3">{{ __('Mail settings updated.') }}</div>
     @endif
 
+    @if (session('status') === 'theme-updated')
+        <div class="bg-green-50 text-green-700 text-sm rounded-md p-3">{{ __('Appearance updated.') }}</div>
+    @endif
+
+    <div class="bg-white shadow-sm sm:rounded-lg p-6" x-data="{ siteTheme: '{{ old('site_theme', $theme['site_theme']) }}' }">
+        <h3 class="font-semibold text-gray-900 mb-4">{{ __('Appearance') }}</h3>
+
+        <form method="POST" action="{{ route('admin.settings.theme.update') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <x-input-label for="site_theme" :value="__('Site theme')" />
+                <select id="site_theme" name="site_theme" x-model="siteTheme" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <option value="default" @selected($theme['site_theme'] === 'default')>{{ __('Default') }}</option>
+                    <option value="paffar" @selected($theme['site_theme'] === 'paffar')>{{ __('PAFFAR Glass') }}</option>
+                    <option value="custom" @selected($theme['site_theme'] === 'custom')>{{ __('Custom CSS') }}</option>
+                </select>
+                <x-input-error :messages="$errors->get('site_theme')" class="mt-2" />
+                <p class="text-xs text-gray-500 mt-1">{{ __('PAFFAR Glass applies a purple/pink glassmorphism look across the site. Custom CSS lets you paste or upload your own overrides.') }}</p>
+            </div>
+
+            <div x-show="siteTheme === 'custom'" x-cloak class="space-y-4">
+                <div>
+                    <x-input-label for="theme_custom_css" :value="__('Custom CSS')" />
+                    <textarea id="theme_custom_css" name="theme_custom_css" rows="8" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm font-mono text-sm" placeholder=":root { --paffar-primary: #5B3E9A; }">{{ old('theme_custom_css', $theme['theme_custom_css']) }}</textarea>
+                    <x-input-error :messages="$errors->get('theme_custom_css')" class="mt-2" />
+                </div>
+
+                <div>
+                    <x-input-label for="theme_css_file" :value="__('Or upload a .css file')" />
+                    <input id="theme_css_file" name="theme_css_file" type="file" accept=".css,text/css" class="mt-1 block w-full text-sm">
+                    <x-input-error :messages="$errors->get('theme_css_file')" class="mt-2" />
+                    <p class="text-xs text-gray-500 mt-1">{{ __('Uploading a file replaces the text above (max 200KB).') }}</p>
+                </div>
+            </div>
+
+            <x-primary-button>{{ __('Save Appearance') }}</x-primary-button>
+        </form>
+    </div>
+
     <div class="bg-white shadow-sm sm:rounded-lg p-6">
         <h3 class="font-semibold text-gray-900 mb-4">{{ __('Email / SMTP Settings') }}</h3>
 
