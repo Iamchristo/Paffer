@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/install.php';
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('network.feed');
 });
 
 Route::get('/manifest.webmanifest', PwaManifestController::class)->name('pwa.manifest');
@@ -91,6 +91,9 @@ Route::get('/rides/create', [RideController::class, 'create'])->middleware('auth
 Route::post('/rides', [RideController::class, 'store'])->middleware('auth')->name('rides.store');
 Route::get('/rides/{ride}', [RideController::class, 'show'])->name('rides.show');
 
+// Network feed: guest access is gated inside the controller by the admin "guest feed" setting.
+Route::get('/feed', [NetworkController::class, 'index'])->name('network.feed');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -98,7 +101,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Network / Social
-    Route::get('/feed', [NetworkController::class, 'index'])->name('network.feed');
     Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
     Route::get('/people/{user}', [PeopleController::class, 'show'])->name('people.show');
     Route::post('/people/{user}/follow', [ConnectionController::class, 'store'])->name('connections.store');
@@ -209,6 +211,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/settings', [AdminSettingsController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
         Route::put('/settings/theme', [AdminSettingsController::class, 'updateTheme'])->name('settings.theme.update');
+        Route::put('/settings/guest-feed', [AdminSettingsController::class, 'updateGuestFeed'])->name('settings.guest-feed.update');
 
         Route::get('/announcements', [AdminAnnouncementController::class, 'index'])->name('announcements.index');
         Route::post('/announcements', [AdminAnnouncementController::class, 'store'])->name('announcements.store');

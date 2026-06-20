@@ -24,7 +24,7 @@
         @include('partials.theme-css')
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100 pb-16 sm:pb-0">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -40,6 +40,8 @@
             <main>
                 {{ $slot }}
             </main>
+
+            @include('layouts.bottom-nav')
         </div>
     </body>
 </html>

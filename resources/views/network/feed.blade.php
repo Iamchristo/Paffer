@@ -6,17 +6,24 @@
     <div class="py-12">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data" class="space-y-3">
-                        @csrf
-                        <textarea name="body" rows="3" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="{{ __('Share an update with your network...') }}">{{ old('body') }}</textarea>
-                        <x-input-error :messages="$errors->get('body')" />
-                        <div class="flex items-center justify-between">
-                            <input type="file" name="image" class="text-sm text-gray-600">
-                            <x-primary-button>{{ __('Post') }}</x-primary-button>
-                        </div>
-                    </form>
-                </div>
+                @auth
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data" class="space-y-3">
+                            @csrf
+                            <textarea name="body" rows="3" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="{{ __('Share an update with your network...') }}">{{ old('body') }}</textarea>
+                            <x-input-error :messages="$errors->get('body')" />
+                            <div class="flex items-center justify-between">
+                                <input type="file" name="image" class="text-sm text-gray-600">
+                                <x-primary-button>{{ __('Post') }}</x-primary-button>
+                            </div>
+                        </form>
+                    </div>
+                @else
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6 flex items-center justify-between">
+                        <p class="text-gray-600 text-sm">{{ __("You're browsing as a guest. Log in to post, like, and comment.") }}</p>
+                        <a href="{{ route('login') }}" class="ms-4 shrink-0"><x-primary-button>{{ __('Log in') }}</x-primary-button></a>
+                    </div>
+                @endauth
 
                 @forelse ($posts as $post)
                     <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -33,20 +40,26 @@
                         @endif
 
                         <div class="mt-4 flex items-center space-x-4 text-sm">
-                            <form method="POST" action="{{ route('posts.like', $post) }}">
-                                @csrf
-                                <button type="submit" class="{{ $post->isLikedBy(Auth::user()) ? 'text-indigo-600 font-medium' : 'text-gray-500' }}">
-                                    {{ __('Like') }} ({{ $post->likes->count() }})
-                                </button>
-                            </form>
-                            <span class="text-gray-400">{{ $post->comments->count() }} {{ __('comments') }}</span>
-                            @if ($post->user_id === Auth::id())
-                                <form method="POST" action="{{ route('posts.destroy', $post) }}">
+                            @auth
+                                <form method="POST" action="{{ route('posts.like', $post) }}">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500">{{ __('Delete') }}</button>
+                                    <button type="submit" class="{{ $post->isLikedBy(Auth::user()) ? 'text-indigo-600 font-medium' : 'text-gray-500' }}">
+                                        {{ __('Like') }} ({{ $post->likes->count() }})
+                                    </button>
                                 </form>
-                            @endif
+                            @else
+                                <span class="text-gray-500">{{ __('Like') }} ({{ $post->likes->count() }})</span>
+                            @endauth
+                            <span class="text-gray-400">{{ $post->comments->count() }} {{ __('comments') }}</span>
+                            @auth
+                                @if ($post->user_id === Auth::id())
+                                    <form method="POST" action="{{ route('posts.destroy', $post) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-500">{{ __('Delete') }}</button>
+                                    </form>
+                                @endif
+                            @endauth
                         </div>
 
                         <div class="mt-4 space-y-2">
@@ -56,11 +69,13 @@
                                     <span class="text-gray-600">{{ $comment->body }}</span>
                                 </div>
                             @endforeach
-                            <form method="POST" action="{{ route('posts.comments.store', $post) }}" class="flex gap-2">
-                                @csrf
-                                <input type="text" name="body" class="flex-1 rounded-md border-gray-300 text-sm" placeholder="{{ __('Write a comment...') }}">
-                                <button type="submit" class="text-sm text-indigo-600">{{ __('Reply') }}</button>
-                            </form>
+                            @auth
+                                <form method="POST" action="{{ route('posts.comments.store', $post) }}" class="flex gap-2">
+                                    @csrf
+                                    <input type="text" name="body" class="flex-1 rounded-md border-gray-300 text-sm" placeholder="{{ __('Write a comment...') }}">
+                                    <button type="submit" class="text-sm text-indigo-600">{{ __('Reply') }}</button>
+                                </form>
+                            @endauth
                         </div>
                     </div>
                 @empty
@@ -79,10 +94,12 @@
                         @foreach ($suggestions as $person)
                             <div class="flex items-center justify-between">
                                 <a href="{{ route('people.show', $person) }}" class="text-sm text-gray-800">{{ $person->name }}</a>
-                                <form method="POST" action="{{ route('connections.store', $person) }}">
-                                    @csrf
-                                    <button type="submit" class="text-xs text-indigo-600">{{ __('Follow') }}</button>
-                                </form>
+                                @auth
+                                    <form method="POST" action="{{ route('connections.store', $person) }}">
+                                        @csrf
+                                        <button type="submit" class="text-xs text-indigo-600">{{ __('Follow') }}</button>
+                                    </form>
+                                @endauth
                             </div>
                         @endforeach
                     </div>

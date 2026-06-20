@@ -30,6 +30,7 @@ class SettingsController extends Controller
                 'site_theme' => Setting::get('site_theme', 'default'),
                 'theme_custom_css' => Setting::get('theme_custom_css', ''),
             ],
+            'guestFeedEnabled' => Setting::getBool('guest_feed_enabled', false),
         ]);
     }
 
@@ -85,5 +86,16 @@ class SettingsController extends Controller
         Setting::set('theme_custom_css', str_ireplace('</style', '&lt;/style', $css ?? ''));
 
         return back()->with('status', 'theme-updated');
+    }
+
+    public function updateGuestFeed(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'guest_feed_enabled' => ['nullable', 'boolean'],
+        ]);
+
+        Setting::set('guest_feed_enabled', $request->boolean('guest_feed_enabled'));
+
+        return back()->with('status', 'guest-feed-updated');
     }
 }

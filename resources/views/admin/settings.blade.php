@@ -11,6 +11,10 @@
         <div class="bg-green-50 text-green-700 text-sm rounded-md p-3">{{ __('Appearance updated.') }}</div>
     @endif
 
+    @if (session('status') === 'guest-feed-updated')
+        <div class="bg-green-50 text-green-700 text-sm rounded-md p-3">{{ __('Guest feed visibility updated.') }}</div>
+    @endif
+
     <div class="bg-white shadow-sm sm:rounded-lg p-6" x-data="{ siteTheme: '{{ old('site_theme', $theme['site_theme']) }}' }">
         <h3 class="font-semibold text-gray-900 mb-4">{{ __('Appearance') }}</h3>
 
@@ -45,6 +49,25 @@
             </div>
 
             <x-primary-button>{{ __('Save Appearance') }}</x-primary-button>
+        </form>
+    </div>
+
+    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+        <h3 class="font-semibold text-gray-900 mb-4">{{ __('Home Page & Guest Access') }}</h3>
+
+        <form method="POST" action="{{ route('admin.settings.guest-feed.update') }}" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div class="flex items-start gap-3">
+                <input id="guest_feed_enabled" name="guest_feed_enabled" type="checkbox" value="1" class="mt-1 rounded border-gray-300" @checked(old('guest_feed_enabled', $guestFeedEnabled))>
+                <div>
+                    <x-input-label for="guest_feed_enabled" :value="__('Allow guests to view the feed')" />
+                    <p class="text-xs text-gray-500 mt-1">{{ __('When enabled, visitors who are not logged in can browse the feed from the home page. When disabled, the home page shows the login page to guests. Logged-in users always see the feed.') }}</p>
+                </div>
+            </div>
+
+            <x-primary-button>{{ __('Save') }}</x-primary-button>
         </form>
     </div>
 
