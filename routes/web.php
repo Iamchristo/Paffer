@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdController;
+use App\Http\Controllers\Admin\AdController as AdminAdController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MobileController as AdminMobileController;
 use App\Http\Controllers\Admin\ModerationController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\RecommendationController as AdminRecommendationController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -245,6 +247,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/recommendations', [AdminRecommendationController::class, 'edit'])->name('recommendations.edit');
         Route::put('/recommendations', [AdminRecommendationController::class, 'update'])->name('recommendations.update');
+
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+
+        Route::get('/ads', [AdminAdController::class, 'index'])->name('ads.index');
+        Route::post('/ads/{ad}/approve', [AdminAdController::class, 'approve'])->name('ads.approve');
+        Route::post('/ads/{ad}/reject', [AdminAdController::class, 'reject'])->name('ads.reject');
+        Route::delete('/ads/{ad}', [AdminAdController::class, 'destroy'])->name('ads.destroy');
     });
 });
 

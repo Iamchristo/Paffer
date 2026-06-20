@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Order;
 use App\Models\Post;
+use App\Models\Setting;
 use App\Models\Skill;
-use App\Models\Store;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
@@ -44,6 +44,9 @@ class DemoDataSeeder extends Seeder
         $this->seedFeed($everyone, $sellers, $tutors);
         $this->seedOrders($sellers, $everyone);
         $this->seedEnrollments($tutors, $everyone);
+        $this->seedWallets($everyone);
+        $this->seedWorkspaces($everyone);
+        $this->seedPlatformSettings();
     }
 
     private function seedSkills(): Collection
@@ -148,7 +151,7 @@ class DemoDataSeeder extends Seeder
         $defs = $this->courseDefinitions();
         $grouped = [[0], [1], [2], [3], [4], [5, 6]];
 
-        return collect($grouped)->map(function (array $courseIndexes, int $i) use ($defs, $skills) {
+        return collect($grouped)->map(function (array $courseIndexes, int $i) use ($skills) {
             $tutor = User::factory()->create([
                 'is_tutor' => true,
                 'tutor_status' => 'approved',
@@ -388,5 +391,85 @@ class DemoDataSeeder extends Seeder
                 }
             }
         }
+    }
+
+    private function seedWallets(Collection $everyone): void
+    {
+        $topupAmounts = [2000, 5000, 7500, 10000, 2500];
+        $recipients = $everyone->random(min(8, $everyone->count()));
+
+        foreach ($recipients as $i => $user) {
+            $wallet = $user->wallet;
+            $amountCents = $topupAmounts[$i % count($topupAmounts)];
+
+            if ($i % 3 === 0) {
+                $wallet->transactions()->create([
+                    'type' => 'topup',
+                    'amount_cents' => $amountCents,
+                    'status' => 'pending',
+                ]);
+
+                continue;
+            }
+
+            $wallet->transactions()->create([
+                'type' => 'topup',
+                'amount_cents' => $amountCents,
+                'status' => 'completed',
+            ]);
+            $wallet->credit($amountCents);
+        }
+    }
+
+    private function workspaceDefinitions(): array
+    {
+        return [
+            ['name' => 'Q3 Product Launch', 'description' => 'Coordinating the launch of our new product line.', 'tasks' => [
+                ['Finalize packaging design', 'done'], ['Draft launch announcement', 'in_progress'],
+                ['Line up press outreach', 'todo'], ['Set up landing page', 'todo'],
+            ]],
+            ['name' => 'Vendor Onboarding', 'description' => 'Streamlining how new vendors get set up on PAFFAR.', 'tasks' => [
+                ['Write onboarding checklist', 'done'], ['Record walkthrough video', 'in_progress'], ['Collect vendor feedback', 'todo'],
+            ]],
+        ];
+    }
+
+    private function seedWorkspaces(Collection $everyone): void
+    {
+        foreach ($this->workspaceDefinitions() as $def) {
+            $owner = $everyone->random();
+
+            $workspace = $owner->ownedWorkspaces()->create([
+                'name' => $def['name'],
+                'slug' => Str::slug($def['name']).'-'.Str::random(6),
+                'description' => $def['description'],
+            ]);
+            $workspace->members()->attach($owner, ['role' => 'owner']);
+
+            $teammates = $everyone->reject(fn (User $u) => $u->id === $owner->id)
+                ->random(min(3, $everyone->count() - 1));
+            foreach ($teammates as $teammate) {
+                $workspace->members()->attach($teammate, ['role' => 'member']);
+            }
+
+            foreach ($def['tasks'] as [$title, $status]) {
+                $workspace->tasks()->create([
+                    'title' => $title,
+                    'status' => $status,
+                    'assignee_id' => $teammates->random()->id,
+                    'created_by' => $owner->id,
+                ]);
+            }
+        }
+    }
+
+    private function seedPlatformSettings(): void
+    {
+        Setting::set('recommend_on_feed', true);
+        Setting::set('recommend_on_marketplace', true);
+        Setting::set('recommend_on_learn', true);
+        Setting::set('pwa_enabled', true);
+        Setting::set('pwa_short_name', config('app.name'));
+        Setting::set('pwa_theme_color', '#4f46e5');
     }
 }
