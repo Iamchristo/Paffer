@@ -1,234 +1,151 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+<div x-data="{ drawerOpen: false }">
+<nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
+    <div class="px-3 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 gap-3">
+            <!-- Menu button -->
+            <button @click="drawerOpen = true" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none">
+                <x-icon name="menu" />
+            </button>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('network.feed')" :active="request()->routeIs('network.feed')">
-                        {{ __('Feed') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('people.index')" :active="request()->routeIs('people.*')">
-                        {{ __('People') }}
-                    </x-nav-link>
-                    @auth
-                        <x-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
-                            {{ __('Messages') }}
-                            @if (($unreadMessagesCount = Auth::user()->unreadMessagesCount()) > 0)
-                                <span class="ms-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold text-white bg-indigo-600 rounded-full">{{ $unreadMessagesCount }}</span>
-                            @endif
-                        </x-nav-link>
-                    @endauth
-                    <x-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
-                        {{ __('Groups') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.*')">
-                        {{ __('Events') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('rides.index')" :active="request()->routeIs('rides.*')">
-                        {{ __('Rides') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
-                        {{ __('Marketplace') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('learn.index')" :active="request()->routeIs('learn.*')">
-                        {{ __('Learn') }}
-                    </x-nav-link>
-                    @auth
-                        <x-nav-link :href="route('workspaces.index')" :active="request()->routeIs('workspaces.*')">
-                            {{ __('Workspaces') }}
-                        </x-nav-link>
-                    @endauth
-                    @auth
-                        @if (Auth::user()->isApprovedSeller())
-                            <x-nav-link :href="route('seller.dashboard')" :active="request()->routeIs('seller.*')">
-                                {{ __('My Store') }}
-                            </x-nav-link>
-                        @endif
-                        @if (Auth::user()->isApprovedTutor())
-                            <x-nav-link :href="route('tutor.courses.index')" :active="request()->routeIs('tutor.*')">
-                                {{ __('My Courses') }}
-                            </x-nav-link>
-                        @endif
-                        @if (Auth::user()->isAdmin())
-                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                                {{ __('Admin') }}
-                            </x-nav-link>
-                        @endif
-                    @endauth
+            <!-- Search -->
+            <form action="{{ route('people.index') }}" method="GET" class="flex-1 max-w-md">
+                <label for="nav-search" class="sr-only">{{ __('Search people') }}</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <x-icon name="search" class="h-4 w-4" />
+                    </span>
+                    <input
+                        id="nav-search"
+                        type="text"
+                        name="q"
+                        value="{{ request('q') }}"
+                        placeholder="{{ __('Search people...') }}"
+                        class="w-full rounded-full border-gray-200 bg-gray-100 pl-9 pr-3 py-2 text-sm focus:bg-white focus:ring-indigo-500 focus:border-indigo-500"
+                    >
                 </div>
-            </div>
+            </form>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-2">
+            <!-- Right icons -->
+            <div class="flex items-center gap-1 shrink-0">
                 @auth
-                    <a href="{{ route('wallet.index') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                        {{ __('Wallet') }}: ${{ number_format((Auth::user()->wallet->balance_cents ?? 0) / 100, 2) }}
+                    <a href="{{ route('messages.index') }}" class="relative inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100" title="{{ __('Messages') }}">
+                        <x-icon name="chat" />
+                        @if (($unreadMessagesCount = Auth::user()->unreadMessagesCount()) > 0)
+                            <span class="absolute top-1 right-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white">{{ $unreadMessagesCount }}</span>
+                        @endif
                     </a>
-                    <a href="{{ route('cart.index') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                        {{ __('Cart') }}
-                    </a>
-
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
-
-                                <div class="ms-1">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </button>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-                            <x-dropdown-link :href="route('orders.index')">
-                                {{ __('My Orders') }}
-                            </x-dropdown-link>
-                            <x-dropdown-link :href="route('enrollments.index')">
-                                {{ __('My Enrollments') }}
-                            </x-dropdown-link>
-                            <x-dropdown-link :href="route('ads.index')">
-                                {{ __('My Ads') }}
-                            </x-dropdown-link>
-                            @unless (Auth::user()->is_seller)
-                                <x-dropdown-link :href="route('seller.apply')">
-                                    {{ __('Become a Seller') }}
-                                </x-dropdown-link>
-                            @endunless
-                            @unless (Auth::user()->is_tutor)
-                                <x-dropdown-link :href="route('tutor.apply')">
-                                    {{ __('Become a Tutor') }}
-                                </x-dropdown-link>
-                            @endunless
-
-                            <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
-                                    {{ __('Log Out') }}
-                                </x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
+                    <button type="button" class="relative inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100" title="{{ __('Notifications') }}">
+                        <x-icon name="bell" />
+                    </button>
                 @else
-                    <a href="{{ route('login') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                        {{ __('Log in') }}
-                    </a>
-                    <a href="{{ route('register') }}" class="inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                        {{ __('Register') }}
-                    </a>
+                    <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900">{{ __('Log in') }}</a>
+                    <a href="{{ route('register') }}" class="px-3 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800">{{ __('Register') }}</a>
                 @endauth
             </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('network.feed')" :active="request()->routeIs('network.feed')">
-                {{ __('Feed') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('people.index')" :active="request()->routeIs('people.*')">
-                {{ __('People') }}
-            </x-responsive-nav-link>
-            @auth
-                <x-responsive-nav-link :href="route('messages.index')" :active="request()->routeIs('messages.*')">
-                    {{ __('Messages') }}
-                    @if (($unreadMessagesCount = Auth::user()->unreadMessagesCount()) > 0)
-                        <span class="ms-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold text-white bg-indigo-600 rounded-full">{{ $unreadMessagesCount }}</span>
-                    @endif
-                </x-responsive-nav-link>
-            @endauth
-            <x-responsive-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.*')">
-                {{ __('Groups') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('events.index')" :active="request()->routeIs('events.*')">
-                {{ __('Events') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('rides.index')" :active="request()->routeIs('rides.*')">
-                {{ __('Rides') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('marketplace.index')" :active="request()->routeIs('marketplace.*')">
-                {{ __('Marketplace') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('learn.index')" :active="request()->routeIs('learn.*')">
-                {{ __('Learn') }}
-            </x-responsive-nav-link>
-            @auth
-                <x-responsive-nav-link :href="route('workspaces.index')" :active="request()->routeIs('workspaces.*')">
-                    {{ __('Workspaces') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('wallet.index')" :active="request()->routeIs('wallet.*')">
-                    {{ __('Wallet') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                    {{ __('Cart') }}
-                </x-responsive-nav-link>
-            @endauth
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            @auth
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                </div>
-
-                <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('ads.index')">
-                        {{ __('My Ads') }}
-                    </x-responsive-nav-link>
-
-                    <!-- Authentication -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            {{ __('Log Out') }}
-                        </x-responsive-nav-link>
-                    </form>
-                </div>
-            @else
-                <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('login')">
-                        {{ __('Log in') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">
-                        {{ __('Register') }}
-                    </x-responsive-nav-link>
-                </div>
-            @endauth
         </div>
     </div>
 </nav>
+
+    <!-- Drawer overlay -->
+    <div x-show="drawerOpen" x-cloak x-transition.opacity @click="drawerOpen = false" class="fixed inset-0 z-40 bg-gray-900/50"></div>
+
+    <!-- Slide-out drawer -->
+    <aside
+        x-show="drawerOpen"
+        x-cloak
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="-translate-x-full"
+        class="fixed inset-y-0 left-0 z-50 w-1/2 min-w-[260px] max-w-sm bg-white shadow-xl overflow-y-auto"
+        @click.outside="drawerOpen = false"
+    >
+        <div class="flex items-center justify-between h-16 px-4 border-b border-gray-100">
+            @auth
+                <div class="flex items-center gap-2 min-w-0">
+                    <x-avatar :user="Auth::user()" size="9" />
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-800 truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                    </div>
+                </div>
+            @else
+                <span class="font-semibold text-gray-800">{{ __('Menu') }}</span>
+            @endauth
+            <button @click="drawerOpen = false" class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                <x-icon name="x-mark" class="h-5 w-5" />
+            </button>
+        </div>
+
+        <nav class="px-3 py-4 space-y-6">
+            <div>
+                <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">{{ __('Browse') }}</p>
+                <div class="mt-1 space-y-0.5">
+                    <x-drawer-link :href="route('network.feed')" icon="home" :active="request()->routeIs('network.feed')">{{ __('Feed') }}</x-drawer-link>
+                    <x-drawer-link :href="route('people.index')" icon="users" :active="request()->routeIs('people.*')">{{ __('People') }}</x-drawer-link>
+                    <x-drawer-link :href="route('groups.index')" icon="user-group" :active="request()->routeIs('groups.*')">{{ __('Groups') }}</x-drawer-link>
+                    <x-drawer-link :href="route('events.index')" icon="calendar" :active="request()->routeIs('events.*')">{{ __('Events') }}</x-drawer-link>
+                    <x-drawer-link :href="route('rides.index')" icon="truck" :active="request()->routeIs('rides.*')">{{ __('Rides') }}</x-drawer-link>
+                    <x-drawer-link :href="route('marketplace.index')" icon="shopping-bag" :active="request()->routeIs('marketplace.*')">{{ __('Marketplace') }}</x-drawer-link>
+                    <x-drawer-link :href="route('learn.index')" icon="academic-cap" :active="request()->routeIs('learn.*')">{{ __('Learn') }}</x-drawer-link>
+                </div>
+            </div>
+
+            @auth
+                <div>
+                    <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">{{ __('Workspace') }}</p>
+                    <div class="mt-1 space-y-0.5">
+                        <x-drawer-link :href="route('messages.index')" icon="chat" :active="request()->routeIs('messages.*')" :badge="($c = Auth::user()->unreadMessagesCount()) > 0 ? $c : null">{{ __('Messages') }}</x-drawer-link>
+                        <x-drawer-link :href="route('workspaces.index')" icon="briefcase" :active="request()->routeIs('workspaces.*')">{{ __('Workspaces') }}</x-drawer-link>
+                        @if (Auth::user()->isApprovedSeller())
+                            <x-drawer-link :href="route('seller.dashboard')" icon="building-storefront" :active="request()->routeIs('seller.*')">{{ __('My Store') }}</x-drawer-link>
+                        @endif
+                        @if (Auth::user()->isApprovedTutor())
+                            <x-drawer-link :href="route('tutor.courses.index')" icon="academic-cap" :active="request()->routeIs('tutor.*')">{{ __('My Courses') }}</x-drawer-link>
+                        @endif
+                        @if (Auth::user()->isAdmin())
+                            <x-drawer-link :href="route('admin.dashboard')" icon="shield-check" :active="request()->routeIs('admin.*')">{{ __('Admin') }}</x-drawer-link>
+                        @endif
+                    </div>
+                </div>
+
+                <div>
+                    <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">{{ __('Account') }}</p>
+                    <div class="mt-1 space-y-0.5">
+                        <x-drawer-link :href="route('profile.edit')" icon="user-circle" :active="request()->routeIs('profile.*')">{{ __('Profile') }}</x-drawer-link>
+                        <x-drawer-link :href="route('wallet.index')" icon="wallet" :active="request()->routeIs('wallet.*')">{{ __('Wallet') }}</x-drawer-link>
+                        <x-drawer-link :href="route('cart.index')" icon="shopping-cart" :active="request()->routeIs('cart.*')">{{ __('Cart') }}</x-drawer-link>
+                        <x-drawer-link :href="route('orders.index')" icon="clipboard" :active="request()->routeIs('orders.*')">{{ __('My Orders') }}</x-drawer-link>
+                        <x-drawer-link :href="route('enrollments.index')" icon="academic-cap" :active="request()->routeIs('enrollments.*')">{{ __('My Enrollments') }}</x-drawer-link>
+                        <x-drawer-link :href="route('ads.index')" icon="megaphone" :active="request()->routeIs('ads.*')">{{ __('My Ads') }}</x-drawer-link>
+                        @unless (Auth::user()->is_seller)
+                            <x-drawer-link :href="route('seller.apply')" icon="star">{{ __('Become a Seller') }}</x-drawer-link>
+                        @endunless
+                        @unless (Auth::user()->is_tutor)
+                            <x-drawer-link :href="route('tutor.apply')" icon="star">{{ __('Become a Tutor') }}</x-drawer-link>
+                        @endunless
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium">
+                            <x-icon name="logout" class="h-5 w-5" />
+                            {{ __('Log Out') }}
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div>
+                    <div class="mt-1 space-y-0.5">
+                        <x-drawer-link :href="route('login')" icon="user-circle">{{ __('Log in') }}</x-drawer-link>
+                        <x-drawer-link :href="route('register')" icon="star">{{ __('Register') }}</x-drawer-link>
+                    </div>
+                </div>
+            @endauth
+        </nav>
+    </aside>
+</div>

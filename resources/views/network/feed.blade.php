@@ -4,17 +4,20 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-6">
                 @auth
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                    <div id="post-composer" class="bg-white shadow-sm sm:rounded-lg p-6">
                         <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data" class="space-y-3">
                             @csrf
-                            <textarea name="body" rows="3" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="{{ __('Share an update with your network...') }}">{{ old('body') }}</textarea>
+                            <div class="flex items-start gap-3">
+                                <x-avatar :user="Auth::user()" size="10" class="shrink-0" />
+                                <textarea name="body" rows="3" class="w-full rounded-md border-gray-300 shadow-sm" placeholder="{{ __('Share an update with your network...') }}">{{ old('body') }}</textarea>
+                            </div>
                             <x-input-error :messages="$errors->get('body')" />
-                            <div class="flex items-center justify-between">
-                                <input type="file" name="image" class="text-sm text-gray-600">
-                                <x-primary-button>{{ __('Post') }}</x-primary-button>
+                            <div class="flex items-center justify-between gap-2">
+                                <input type="file" name="image" class="text-sm text-gray-600 min-w-0">
+                                <x-primary-button class="shrink-0">{{ __('Post') }}</x-primary-button>
                             </div>
                         </form>
                     </div>
@@ -28,12 +31,17 @@
                 @forelse ($posts as $post)
                     <div class="bg-white shadow-sm sm:rounded-lg p-6">
                         <div class="flex items-center justify-between">
-                            <a href="{{ route('people.show', $post->user) }}" class="font-semibold text-gray-900">{{ $post->user->name }}</a>
-                            <span class="text-xs text-gray-500">{{ $post->created_at->diffForHumans() }}</span>
+                            <a href="{{ route('people.show', $post->user) }}" class="flex items-center gap-3 min-w-0">
+                                <x-avatar :user="$post->user" size="10" class="shrink-0" />
+                                <span class="min-w-0">
+                                    <span class="block font-semibold text-gray-900 truncate">{{ $post->user->name }}</span>
+                                    @if ($post->user->profile?->headline)
+                                        <span class="block text-xs text-gray-500 truncate">{{ $post->user->profile->headline }}</span>
+                                    @endif
+                                </span>
+                            </a>
+                            <span class="text-xs text-gray-500 shrink-0">{{ $post->created_at->diffForHumans() }}</span>
                         </div>
-                        @if ($post->user->profile?->headline)
-                            <p class="text-xs text-gray-500">{{ $post->user->profile->headline }}</p>
-                        @endif
                         <p class="mt-3 text-gray-800 whitespace-pre-line">{{ $post->body }}</p>
                         @if ($post->image_path)
                             <img src="{{ Storage::url($post->image_path) }}" class="mt-3 rounded-lg max-h-96 object-cover" alt="">
